@@ -16,7 +16,7 @@ X API的发布帖子功能只支持以下身份验证方式：
 - OAuth 1.0a User Context（用户上下文）
 - OAuth 2.0 User Context（用户上下文）
 
-本程序使用OAuth 1.0a进行身份验证，因为这是最稳定和广泛支持的方式。
+本程序使用OAuth 2.0 User Context进行身份验证，这是X API V2推荐的认证方式，提供更好的安全性和更现代的认证流程。
 
 ## 安装
 
@@ -47,7 +47,7 @@ X API的发布帖子功能只支持以下身份验证方式：
    # }
    
    # 运行程序
-   python x_post_v2.py --text "你的帖子内容"
+   python x_post.py --text "你的帖子内容"
    ```
 
 2. 通过环境变量:
@@ -59,24 +59,21 @@ X API的发布帖子功能只支持以下身份验证方式：
    export X_ACCESS_TOKEN_SECRET="你的账户Access Token Secret"
    
    # 运行程序
-   python x_post_v2.py --text "你的帖子内容"
+   python x_post.py --text "你的帖子内容"
    ```
 
-### 两种API版本
+### 运行程序
 
-本程序提供了两个版本的实现：
+使用以下命令发布帖子：
 
-1. **使用V2 API的版本 (x_post_v2.py)**:
-   ```
-   python x_post_v2.py --text "你的帖子内容" [--config 配置文件] [--debug]
-   ```
+```
+python x_post.py --text "你的帖子内容" [--config 配置文件] [--debug]
+```
 
-2. **使用V1.1 API的版本 (x_post_v1.1.py)**:
-   ```
-   python x_post_v1.1.py --text "你的帖子内容" [--config 配置文件] [--debug]
-   ```
-
-如果遇到认证问题，建议尝试V1.1版本，它通常更加稳定。
+参数说明：
+- `--text` 或 `-t`: 帖子内容
+- `--config` 或 `-c`: 配置文件路径（默认为config.json）
+- `--debug` 或 `-d`: 启用调试模式，显示更详细的日志
 
 ### 调试工具
 
@@ -110,7 +107,6 @@ python debug_auth.py config.json
 1. **401 Unauthorized错误**：
    - 检查OAuth凭证是否正确
    - 确认Access Token没有过期
-   - 尝试使用V1.1 API版本
    - 运行debug_auth.py诊断认证问题
 
 2. **403 Forbidden错误**：
