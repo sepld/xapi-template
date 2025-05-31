@@ -2,32 +2,27 @@
 # -*- coding: utf-8 -*-
 
 import requests
-import json
-import sys
 import logging
 from requests_oauthlib import OAuth1
+from dotenv import load_dotenv
+import os
 
 # 配置日志
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-def load_config(config_file):
-    """从配置文件加载OAuth配置"""
-    try:
-        with open(config_file, 'r') as f:
-            return json.load(f)
-    except Exception as e:
-        logger.error(f"无法加载配置文件: {str(e)}")
-        sys.exit(1)
-
 def main():
     """主函数"""
-    if len(sys.argv) < 2:
-        print("用法: python debug_auth.py config.json")
-        sys.exit(1)
+    # 加载环境变量
+    load_dotenv()
     
-    config_file = sys.argv[1]
-    oauth_config = load_config(config_file)
+    # 从环境变量获取配置
+    oauth_config = {
+        "consumer_key": os.getenv("X_CONSUMER_KEY"),
+        "consumer_secret": os.getenv("X_CONSUMER_SECRET"),
+        "access_token": os.getenv("X_ACCESS_TOKEN"),
+        "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET")
+    }
     
     # 验证配置
     required_keys = ["consumer_key", "consumer_secret", "access_token", "access_token_secret"]
@@ -35,7 +30,7 @@ def main():
     
     if missing_keys:
         logger.error(f"缺少必要的OAuth配置: {', '.join(missing_keys)}")
-        sys.exit(1)
+        return
     
     # 创建OAuth1认证对象
     oauth = OAuth1(

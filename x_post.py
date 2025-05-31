@@ -3,16 +3,9 @@
 
 import requests
 import os
-import json
-from datetime import datetime
-import base64
-import hmac
-import hashlib
-import time
-import urllib.parse
-import uuid
 import logging
 from requests_oauthlib import OAuth1
+from dotenv import load_dotenv
 
 # 配置日志
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
@@ -21,36 +14,18 @@ logger = logging.getLogger(__name__)
 class XAPIClient:
     """X API 客户端类，用于发布帖子"""
     
-    def __init__(self, oauth_config=None, config_file=None):
-        """初始化X API客户端
+    def __init__(self):
+        """初始化X API客户端"""
+        # 加载环境变量
+        load_dotenv()
         
-        Args:
-            oauth_config: OAuth配置信息字典
-            config_file: 配置文件路径
-        """
-        # OAuth配置信息
-        self.oauth_config = oauth_config or {}
-        
-        # 如果没有提供oauth_config，尝试从配置文件加载
-        if not self.oauth_config and config_file:
-            try:
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
-                    self.oauth_config = config
-            except Exception as e:
-                logger.error(f"无法从配置文件加载: {str(e)}")
-        
-        # 如果仍然没有oauth_config，尝试从环境变量加载
-        if not self.oauth_config:
-            try:
-                self.oauth_config = {
-                    "consumer_key": os.environ.get("X_CONSUMER_KEY"),
-                    "consumer_secret": os.environ.get("X_CONSUMER_SECRET"),
-                    "access_token": os.environ.get("X_ACCESS_TOKEN"),
-                    "access_token_secret": os.environ.get("X_ACCESS_TOKEN_SECRET")
-                }
-            except Exception as e:
-                logger.error(f"从环境变量加载配置失败: {str(e)}")
+        # 从环境变量获取配置
+        self.oauth_config = {
+            "consumer_key": os.getenv("X_CONSUMER_KEY"),
+            "consumer_secret": os.getenv("X_CONSUMER_SECRET"),
+            "access_token": os.getenv("X_ACCESS_TOKEN"),
+            "access_token_secret": os.getenv("X_ACCESS_TOKEN_SECRET")
+        }
             
         # 验证必要的配置信息
         required_keys = ["consumer_key", "consumer_secret", "access_token", "access_token_secret"]
@@ -108,7 +83,6 @@ def main():
     
     parser = argparse.ArgumentParser(description="使用X API发布帖子")
     parser.add_argument("--text", "-t", default=text, help="帖子内容")
-    parser.add_argument("--config", "-c", help="配置文件路径，默认为config.json", default="config.json")
     parser.add_argument("--debug", "-d", action="store_true", help="启用调试模式")
     
     args = parser.parse_args()
@@ -119,7 +93,7 @@ def main():
         logger.debug("调试模式已启用")
     
     try:
-        client = XAPIClient(config_file=args.config)
+        client = XAPIClient()
         result = client.create_post(args.text)
         
         if result:

@@ -16,7 +16,7 @@ X API的发布帖子功能只支持以下身份验证方式：
 - OAuth 1.0a User Context（用户上下文）
 - OAuth 2.0 User Context（用户上下文）
 
-本程序使用OAuth 2.0 User Context进行身份验证，这是X API V2推荐的认证方式，提供更好的安全性和更现代的认证流程。
+本程序使用OAuth 1.0a User Context进行身份验证，这是X API V2推荐的认证方式，提供更好的安全性和更现代的认证流程。
 
 ## 安装
 
@@ -31,35 +31,19 @@ X API的发布帖子功能只支持以下身份验证方式：
 
 ### 设置认证信息
 
-你可以通过以下两种方式提供OAuth凭证：
+通过环境变量提供OAuth凭证：
 
-1. 通过配置文件:
-   ```
-   # 创建配置文件
-   cp config.example.json config.json
-   
-   # 编辑配置文件，填入你的OAuth凭证
-   # {
-   #   "consumer_key": "你的应用Consumer Key",
-   #   "consumer_secret": "你的应用Consumer Secret",
-   #   "access_token": "你的账户Access Token",
-   #   "access_token_secret": "你的账户Access Token Secret"
-   # }
-   
-   # 运行程序
-   python x_post.py --text "你的帖子内容"
-   ```
-
-2. 通过环境变量:
+1. 复制环境变量模板文件：
    ```bash
-   # 设置环境变量
-   export X_CONSUMER_KEY="你的应用Consumer Key"
-   export X_CONSUMER_SECRET="你的应用Consumer Secret"
-   export X_ACCESS_TOKEN="你的账户Access Token"
-   export X_ACCESS_TOKEN_SECRET="你的账户Access Token Secret"
-   
-   # 运行程序
-   python x_post.py --text "你的帖子内容"
+   cp .env.example .env
+   ```
+
+2. 编辑 `.env` 文件，填入你的OAuth凭证：
+   ```
+   X_CONSUMER_KEY=你的应用Consumer Key
+   X_CONSUMER_SECRET=你的应用Consumer Secret
+   X_ACCESS_TOKEN=你的账户Access Token
+   X_ACCESS_TOKEN_SECRET=你的账户Access Token Secret
    ```
 
 ### 运行程序
@@ -67,12 +51,11 @@ X API的发布帖子功能只支持以下身份验证方式：
 使用以下命令发布帖子：
 
 ```
-python x_post.py --text "你的帖子内容" [--config 配置文件] [--debug]
+python x_post.py --text "你的帖子内容" [--debug]
 ```
 
 参数说明：
 - `--text` 或 `-t`: 帖子内容
-- `--config` 或 `-c`: 配置文件路径（默认为config.json）
 - `--debug` 或 `-d`: 启用调试模式，显示更详细的日志
 
 ### 调试工具
@@ -80,7 +63,7 @@ python x_post.py --text "你的帖子内容" [--config 配置文件] [--debug]
 遇到认证问题时，可以使用以下工具进行诊断：
 
 ```
-python debug_auth.py config.json
+python debug_auth.py
 ```
 
 这个工具会尝试获取当前用户信息，可以帮助检查OAuth认证是否正确配置。
